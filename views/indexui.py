@@ -21,14 +21,12 @@ if platform == 'android':
     InputStreamReader = autoclass('java.io.InputStreamReader')
     BufferedReader = autoclass('java.io.BufferedReader')
     UUID = autoclass('java.util.UUID')
-    Reading = autoclass('org.kivy.android.ReadInput')
     Stream = autoclass('org.kivy.android.ReadStream')
 
 class RootLay(FloatLayout):
     this = ObjectProperty(None)  # App objec
     recv_stream = ObjectProperty(None)
     send_stream = ObjectProperty(None)
-    reading = ObjectProperty(None)
     stream = ObjectProperty(None)
     rfsocket = ObjectProperty(None)
     device = ObjectProperty(None)
@@ -51,7 +49,6 @@ class RootLay(FloatLayout):
         self.device = None
         self.this = App.get_running_app()
         self.dev_list = []
-        self.reading = Reading()
         self.stream = Stream()
         Window.bind(on_keyboard=self.handle_key)
         Clock.schedule_once(self.setup_menu)  # delay until ids are available
