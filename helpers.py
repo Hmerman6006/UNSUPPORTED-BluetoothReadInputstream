@@ -30,8 +30,8 @@ class BluetoothHelper():
                     return False
             else:
                 print('Dialog popup to inform')
-                return False
                 this.root.dialog.open_popup_dialog('Enable Bluetooth and pair devices', 'info')
+                return False
         else:
             return False
 
