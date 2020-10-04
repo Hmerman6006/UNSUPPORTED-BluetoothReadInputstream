@@ -7,7 +7,7 @@ title = BluetoothInputReader
 package.name = bluetoothreader
 
 # (str) Package domain (needed for android/ios packaging)
-package.domain = org.dataleaf.za.co
+package.domain = org.hmerman6006.za.co
 
 # (str) Source code where the main.py live
 source.dir = .
