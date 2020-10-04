@@ -1,0 +1,207 @@
+#: import ModalView kivy.uix.modalview.ModalView
+#: import Button kivy.uix.button.Button
+#: import Window kivy.core.window.Window
+
+#:set cross '\u2715'
+
+<FlashButton>
+    color: (0,0,0,1)
+    font_name: 'Arial'
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    font_size: self.height / 3.4
+<FlashButtonTwo@Button>
+    color: (0,0,0,1)
+    font_name: 'Arial'
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    font_size: self.height / 3
+
+<PopScrollBut>
+    color: (0,0,0,1)
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    on_press: app.root.pop.get_pop_scroll(self.text)
+    font_size: self.height / 3.4
+<PopScroll>
+    id: popscroll
+    auto_dismiss: True
+    orientation: 'vertical'
+    size_hint: (0.94, 0.41)
+    pos_hint: {'top': 0.72}
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    background: 'white.png'
+    canvas:
+        Color:
+            rgba: app.root.background_color if app.root.background_color else app.theme_cls.bg_dark
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [7,]
+    canvas.before:
+        BorderImage:
+            source: 'res/images/shadow93.png'
+            border: 30, 30, 30, 30
+            pos: self.x - 30, self.y - 30
+            size: self.width + 60, self.height + 60
+    RecycleView:
+        id: view_popscroll
+        viewclass: 'PopScrollBut'
+        pos_hint: {'top': 1}
+        size_hint: [1, 0.99]
+        do_scroll_y: True
+        RecycleGridLayout:
+            cols: 1
+            spacing: 1
+            default_size: None, 140
+            default_size_hint: 1, None
+            size_hint: 1, None
+            size: self.minimum_size
+<PopDialog>
+    on_open: app.root._is_modal_open = True
+    on_dismiss: app.root._is_modal_open = False
+    id: dialog
+    auto_dismiss: True
+    orientation: 'vertical'
+    height: dialog_messager.height + 25
+    width: Window.width - 15
+    size_hint: (None, None)
+    pos_hint: {'top': 0.72}
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    background: 'white.png'
+    canvas.before:
+        Color:
+            rgba: app.root.background_color if app.root.background_color else app.theme_cls.bg_dark
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [18,]
+    canvas.before:
+        BorderImage:
+            source: 'res/images/shadow93.png'
+            border: 30, 30, 30, 30
+            pos: self.x - 30, self.y - 30
+            size: self.width + 60, self.height + 60
+    Label:
+        id: dialog_messager
+        pos_hint: {'top': 0.72}
+        text_size: self.size
+        size_hint_y: None
+        size: self.size
+        height: self.size[1]
+        bold: True
+        halign: 'center'
+        valign: 'middle'
+        canvas.before:
+            Color:
+                rgba: (1, 1, 1, 1)
+            Rectangle:
+                size: self.size
+                pos: self.pos
+        color: (0.1333, 0.1333, 0.1333, 1)
+<PopSnackbar>
+    id: snackbar
+    auto_dismiss: False
+    orientation: 'vertical'
+    width: Window.width * (9 / 10)
+    size_hint: (None, 0.09)
+    pos_hint: {'top': 0.15, 'x': 0.01}
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.bg_dark
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [18,]
+    canvas.before:
+        BorderImage:
+            source: 'res/images/shadow93.png'
+            border: 30, 30, 30, 30
+            pos: self.x - 30, self.y - 30
+            size: self.width + 60, self.height + 60
+    StackLayout:
+        orientation: 'lr-tb'
+        Label:
+            id: snackbar_messager
+            pos_hint: {'top': 0.72}
+            text_size: self.size
+            size_hint_y: None
+            size_hint_x: 0.9
+            height: snackbar.size[1]
+            bold: True
+            valign: 'middle'
+            padding_x: 10
+            canvas.before:
+                Color:
+                    rgba: (1.0, 0.82, 0.44, 1.0)
+                Rectangle:
+                    size: self.size
+                    pos: self.pos
+            color: (0.1333, 0.1333, 0.1333, 1)
+        FlashButton:
+            text: cross
+            size_hint_x: 0.1
+            height: snackbar.size[1]
+            color: (0, 0.72, 0.95, 1)
+            background_color: (1.0, 0.82, 0.44, 1.0)
+            background_down: ''
+            on_release: root.close_popup_dialog()
+
+<PopDialogWithAction>
+    id: dialog_action
+    auto_dismiss: False
+    orientation: 'vertical'
+    size_hint_y: 0.3
+    width: Window.width - 15
+    size_hint_x: None
+    pos_hint: {'top': 0.72}
+    background_normal: ''
+    background_color: (1, 1, 1, 0)
+    background: 'white.png'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.bg_dark
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [7,]
+    canvas.before:
+        BorderImage:
+            source: 'res/images/shadow93.png'
+            border: 30, 30, 30, 30
+            pos: self.x - 30, self.y - 30
+            size: self.width + 60, self.height + 60
+    FloatLayout:
+        id: action_layout
+        Label:
+            id: dialog_action_messager
+            pos_hint: {'top': 0.72}
+            text_size: self.size
+            size_hint_y: None
+            size_hint_x: 1
+            height: dialog_action.size[1] / 2
+            bold: True
+            halign: 'center'
+            valign: 'middle'
+            color: (0.1333, 0.1333, 0.1333, 1)
+        FlashButton:
+            id: dialog_action_dismiss
+            text: 'Dismiss'
+            pos_hint: {'top': 0.32, 'right': 0.35}
+            size_hint: [0.3, 0.18]
+            color: (0, 0.72, 0.95, 1)
+            background_down: ''
+            on_release: app.root.dialog_with_action.close_popup_dialog()
+        Label:
+            id: dialog_action_hidden
+            pos_hint: {'top': 0.32, 'right': 0.55}
+            font_size: self.height / 3.4
+            size_hint_y: 0.1
+            size_hint_x: 0.1
+            halign: 'center'
+            valign: 'middle'
+            color: (1, 1, 1, 1)

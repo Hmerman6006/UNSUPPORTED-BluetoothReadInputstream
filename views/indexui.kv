@@ -1,0 +1,54 @@
+#: import FloatLayout kivy.uix.floatlayout
+#: import Window kivy.core.window.Window
+#: import md_icons kivymd.icon_definitions
+#: include views/popscroll.kv
+
+<RootLay>:
+    ScreenManager:
+        id: _screen_manager
+        Screen:
+            name:'home'
+            MDToolbar:
+                pos_hint: {'top': 1, 'right': 1}
+                title: "Bluetooth Input Reader"
+                MDIconButton:
+                    icon: "settings"
+                    on_release: app.open_settings()
+            MDRaisedButton:
+                id: dev_button
+                text: "SEE DEVICES"
+                pos_hint: {"top": .8, "right": 0.5}
+                on_release:
+                    if len(root.dev_list) > 0: app.root.pop.open_pop_scroll_modal()
+                    else:  app.root.dialog.open_popup_dialog('No device chosen. Pair devices.', 'info')
+            TextInput:
+                id: milk
+                text: root.scale_output if root.scale_output != "" else "\n->: No Input\n->: See Devices \n->: Connect"
+                pos_hint: {'top': 0.7, 'right': 1}
+                size_hint: [1, 0.4]
+                readonly: True
+                multiline: True
+                background_color: 0.08,0.08,0.08,1
+                foreground_color: 1,1,1,1
+                background_active: ""
+            MDRectangleFlatIconButton:
+                text: "Disconnect"
+                icon: 'lan-disconnect'
+                pos_hint: {'top': 0.2, 'right': 0.98}
+                on_release:
+                    if root.weigh_tick is not None and root.rfsocket is not None: root.cancel_scale()
+            MDRectangleFlatIconButton:
+                id: connect_scale
+                text: "Connect"
+                icon: 'bluetooth-connect'
+                pos_hint: {'top': 0.28, 'right': 0.98}
+                on_release:
+                    if root.ids.dev_button.text != "SEE DEVICES": root.bluetooth_thread()
+                    else:  app.root.dialog.open_popup_dialog('No device chosen.', 'info')
+            MDLabel:
+                id: stable_output
+                text: root.blue_info if root.blue_info != "" else ""
+                pos_hint: {"center_x": .2, "center_y": .1}
+                height: 50
+                halign: "center"
+                markup: True
