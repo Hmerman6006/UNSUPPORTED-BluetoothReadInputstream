@@ -85,7 +85,7 @@ fullscreen = 0
 android.presplash_color = #FFFFFF
 
 # (list) Permissions
-android.permissions = INTERNET,BLUETOOTH,BLUETOOTH_ADMIN
+android.permissions = INTERNET,BLUETOOTH,BLUETOOTH_ADMIN, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION
 
 # (int) Target Android API, should be as high as possible.
 android.api = 27
@@ -169,7 +169,7 @@ android.add_src = %(source.dir)s/res/ext_java/*.java
 #android.ouya.icon.filename = %(source.dir)s/data/ouya_icon.png
 
 # (str) XML file to include as an intent filters in <activity> tag
-#android.manifest.intent_filters =
+#android.manifest.intent_filters = %(source.dir)s/res/manifests/intents.xml
 
 # (str) launchMode to set for the main activity
 #android.manifest.launch_mode = standard
