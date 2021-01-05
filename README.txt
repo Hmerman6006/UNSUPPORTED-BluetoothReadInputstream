@@ -24,9 +24,17 @@ Android:
         android.add_src = %(source.dir)s/res/ext_java/*.java
 
     Permissions:
-        INTERNET,BLUETOOTH,BLUETOOTH_ADMIN
+        INTERNET,BLUETOOTH,BLUETOOTH_ADMIN, ACCESS_COARSE_LOCATION, ACCESS_FINE_LOCATION
 
     Something to look at:
-        Sometimes UI freezes if cannot find connection
-        Handle bluetooth device sudden power off or disconnection
-        .gif presplash not having animated loading effect
+        Sometimes UI freezes if cannot find connection.
+        Handle bluetooth device sudden power off or disconnection.
+        .gif presplash not having animated loading effect.
+        BroadcastReceiver does not start if initialised in class scope.
+
+    Solved:
+       UI does not freeze when connection is suddenly lost due to Threads on bluetooth connection.
+       Added BroadcastReceiver to check Bluetooth state on.
+
+    NOTES:
+       Current version is rough cut and needs clean up.
