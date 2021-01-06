@@ -1,5 +1,5 @@
 ## Kivy app that reads the Inputstream via Bluetooth
-The [Kivy](https://kivy.org/doc/stable/) and [KivyMD](https://kivymd.readthedocs.io/en/latest/) uses existing OS Api to read the string output from bluetooth device. 
+The [Kivy](https://kivy.org/doc/stable/) and [KivyMD](https://kivymd.readthedocs.io/en/latest/) app uses existing OS Api to read the string output from bluetooth device. 
 
 _*So far only platform implemented for is android_
 
