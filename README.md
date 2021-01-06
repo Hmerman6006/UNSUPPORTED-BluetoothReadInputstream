@@ -14,7 +14,7 @@ main.py, main.kv, helpers.py -----
 ### OS Android
 > Implements java class stored in external file that uses `io.Inputstream` and `io.BufferedReader`
   to read Input until end of line `ascii 10 ('\n') or 13 ('\r'`).
-> For use of `BroadcastReceiver` you needs to amend the following file -- 
+> For use of `BroadcastReceiver` you need to amend the following file -- 
 > * `/.buildozer/android/platform/python-for-android/pythonforandroid/recipes/android/src/android/broadcast.py`, 
 > by adding the code below after first build.
 
