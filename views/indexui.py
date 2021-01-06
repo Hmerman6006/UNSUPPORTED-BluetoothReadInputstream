@@ -67,9 +67,10 @@ class RootLay(FloatLayout):
         if platform == 'android':
             is_enabled = BluetoothHelper().check_bluetooth_enabled()
             if is_enabled:
-                if self.this.br is not None:
-                    self.this.br.start()
+                self.ids.is_bluetooth.text = 'ON'
                 self.get_devices()
+            else:
+                self.ids.is_bluetooth.text = 'OFF'
 
     def handle_key(self, window, key, *args):
         if key == 27:
@@ -207,6 +208,8 @@ class RootLay(FloatLayout):
                 else:
                     self.num -= self.num
                     self.scale_output = self.scale_output + '\n->: Thread died'
+            if self.num <= 5:
+                self.ids.stable_output.text = 'Timeout in ' + str(self.num) + ' sec'
             time.sleep(1)
         self.ids.stable_output.text = 'Disconnecting..'
         self.cancel_scale()

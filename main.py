@@ -53,6 +53,7 @@ class MainApp(MDApp):
         self.icon = '/res/images/poolleaf_16619.png'
         self.use_kivy_settings = False
         self.br = None
+        self.br_strt = False
         if platform == 'android':
             self.br = BroadcastReceiver(self.on_broadcast, actions=['state_changed'])
 
@@ -68,6 +69,16 @@ class MainApp(MDApp):
     def on_start(self):
         BluetoothHelper().run()
 
+    def start_broadcats(self):
+        if self.br and not self.br_strt:
+            self.br.start()
+            self.br_strt = True
+
+    def stop_broadcats(self):
+        if self.br and self.br_strt:
+            self.br.stop()
+            self.br_strt = False
+
     def on_broadcast(self, context, intent):
         listen = intent.getAction()
         state = None
@@ -80,20 +91,18 @@ class MainApp(MDApp):
         elif BluetoothAdapter.STATE_OFF:
             self.root.ids.is_bluetooth.text = 'OFF'
     def on_pause(self):
-        # if self.br is not None:
-        #     self.br.stop()
+        self.stop_broadcats()
         self.root.cancel_scale()
         return True
 
     def on_stop(self):
-        # if self.br is not None:
-        #     self.br.stop()
+        self.stop_broadcats()
         self.root.cancel_scale()
         return True
 
     def on_resume(self):
-        # if self.br is not None:
-        #     self.br.start()
+        self.br = BroadcastReceiver(self.on_broadcast, actions=['state_changed'])
+        self.start_broadcats()
         return True
 
 MainApp().run()

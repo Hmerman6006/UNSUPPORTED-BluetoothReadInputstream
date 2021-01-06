@@ -49,5 +49,4 @@ class BluetoothHelper():
 
             blueAdapt.enable()
         this.root.dialog_with_action.remove_action_button()
-        if this.br is not None:
-            this.br.start()
+        this.start_broadcats()
