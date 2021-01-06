@@ -1,5 +1,5 @@
 ## Kivy app that reads the Inputstream via Bluetooth
-The [Kivy](https://kivy.org/doc/stable/) and [KivyMD](https://kivymd.readthedocs.io/en/latest/) app uses existing OS Api to read the string output from bluetooth device. 
+The [Kivy](https://kivy.org/doc/stable/) and [KivyMD](https://kivymd.readthedocs.io/en/latest/) uses existing OS Api to read the string output from bluetooth device. 
 
 _*So far only platform implemented for is android_
 
@@ -14,7 +14,7 @@ main.py, main.kv, helpers.py -----
 ### OS Android
 > Implements java class stored in external file that uses `io.Inputstream` and `io.BufferedReader`
   to read Input until end of line `ascii 10 ('\n') or 13 ('\r'`).
-> For use of `BroadcastReceiver` you need to amend the following file -- 
+> For use of `BroadcastReceiver` you needs to amend the following file -- 
 > * `/.buildozer/android/platform/python-for-android/pythonforandroid/recipes/android/src/android/broadcast.py`, 
 > by adding the code below after first build.
 
@@ -59,16 +59,17 @@ def _expand_partial_name(partial_name):
 1. Sometimes UI freezes if cannot find connection. **SOLVED** 
 1. Handle bluetooth device sudden power off or disconnection. **SOLVED**
 1. .gif presplash not having animated loading effect.
-1. BroadcastReceiver does not start if initialised in class scope and bluetooth is already ON.
+1. BroadcastReceiver does not start if initialised in class scope and bluetooth is already ON. **SOLVED**
 1. Maybe test thread for connection to RfcommSocket.
 
 ###### Solved:
 1. UI does not freeze when connection is suddenly lost due to Threads on bluetooth RfcommSocket connection.
 1. Added BroadcastReceiver to check Bluetooth state on.
+1. BroadcastReceiver is not needed if bluetooth is ON, since enabled state is checked by using BluetoothAdapter library.  But thanks to AdyWizards [wifiscan](https://github.com/adywizard/wifiscan) project the receiver works `on_resume` and `on_pause`.
 
 ##### NOTES:
 > Cleaned up code.  Tested and no problems yet.
-> BroadcastReceiver is implemented only if bluetooth is off `on_start`.  Need to implement `on_pause` and `on_resume`, but only once resolving BroadcastReceiver scope issue.
+> When intialy connecting to socket the method is unthreaded.  This may cause problems and needs further testing.
 
 ###### Tested with following versions:
 * Python 3.6.9
