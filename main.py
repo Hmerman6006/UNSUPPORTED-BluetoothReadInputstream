@@ -58,7 +58,6 @@ class MainApp(MDApp):
 
     def build_config(self, config):
         config.setdefaults('bluetoothsettings', {
-            'stringbluedevname': 'MI301CP-4069',
             'optionsbluetuuid': '00001101-0000-1000-8000-00805f9b34fb',
             'optionsbluetencoding': 'LATIN-1'})
 
@@ -83,6 +82,7 @@ class MainApp(MDApp):
     def on_pause(self):
         # if self.br is not None:
         #     self.br.stop()
+        self.root.cancel_scale()
         return True
 
     def on_stop(self):

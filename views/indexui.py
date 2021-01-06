@@ -36,12 +36,8 @@ class RootLay(FloatLayout):
     rfsocket = ObjectProperty(None)
     device = ObjectProperty(None)
     scale_output = StringProperty('\n->: No Input\n->: See Devices \n->: Connect')
-    weigh_tick = ObjectProperty(None)
-    the_weight = NumericProperty()  # Weigh time numerical
-    weigh_tme = NumericProperty()  # Weigh time numerical
     bconnect_thread = None  # Bluetooth connect thread
     bcheck_thread = None  # Bluetooth check connect thread
-    blue_conn = BooleanProperty(False)
     blue_info = StringProperty('')
     dev_list = ListProperty()
     _is_modal_open = BooleanProperty(False)  # Modalview function
@@ -105,7 +101,7 @@ class RootLay(FloatLayout):
                                 if self.device.bluetoothEnabled:
                                     self.rfsocket = self.device.createRfcommSocketToServiceRecord(
                                         UUID.fromString(getUuid))
-                                    print('Connecting rf')
+                                    self.scale_output = self.scale_output + '\n->: Connecting RfcommSocket'
                                     if self.rfsocket is not None:
                                         if self.get_port_connect():
                                             recv_stream = self.rfsocket.getInputStream()
@@ -130,14 +126,14 @@ class RootLay(FloatLayout):
                 self.rfsocket = self.device.createRfcommSocket(1)
                 if not self.rfsocket.connected:
                     self.rfsocket.connect()
-                    print('Connecting port 1 on 1')
+                    self.scale_output = self.scale_output + '\n->: Connecting port 1'
             else:
                 if not self.rfsocket.connected:
                     self.rfsocket.connect()
-                    print('Connecting port 1 on 2')
+                    self.scale_output + '\n->: Connecting port 1'
             if self.rfsocket.connected:
                 self.blue_info = '[b]Connected[/b]'
-                print('Connecting port 1 on 3')
+                self.scale_output = self.scale_output + '\n->: Connected port 1'
                 return True
             else:
                 return False
@@ -147,46 +143,26 @@ class RootLay(FloatLayout):
 
     def GetBSerial(self):
         try:
-            # getDevname = self.this.config.get('bluetoothsettings', 'stringbluedevname')
             getDevname = self.ids.dev_button.text
             self.recv_stream, self.send_stream = self.get_socket_stream(getDevname)
-            print('got stream', self.recv_stream, self.send_stream)
+
             if self.rfsocket is None or self.recv_stream == False:
                 if not self.blue_info == '[b]Error[/b]':
                     self.blue_info = '[b]Bluetooth connection failed[/b]'
-                    print('Connecting stream fail')
+                    self.scale_output = self.scale_output + '\n->: Connecting stream fail'
                     self.cancel_scale()
             elif not self.rfsocket.connected:
                 if not self.blue_info == '[b]Error[/b]':
                     self.blue_info = '[b]Bluetooth connection failed[/b]'
-                    print('Connecting fail')
+                    self.scale_output =  self.scale_output + '\n->: Connecting bluetooth fail'
             else:
-                # self.weight_ticker()
                 self.start_bluetooth_thread()
                 self.scale_output = ''
         except jnius.jnius.JavaException as e:
             self.blue_info = '[b]Error[/b]'
             self.cancel_scale()
 
-    def GetInput(self):
-        try:
-            input = ''
-            if self.rfsocket.connected is True and self.recv_stream is not None:
-                if self.weigh_tme > 0:
-                    input = self.stream.readstream(self.recv_stream)
-                    self.scale_output = self.scale_output + '\n->: ' + input
-                    self.weigh_tme -= 1
-                    self.weigh_tick()
-                else:
-                    self.weight_ticker()
-            else:
-                self.GetBSerial()
-        except jnius.jnius.JavaException as e:
-            self.blue_info = '[b]Error[/b]'
-            self.cancel_scale()
-        except ValueError as e:
-            pass
-
+    # main threaded function to read inputstream
     def GetTheInput(self, n):
         try:
             while( self._alive and self.rfsocket.connected and self.recv_stream is not None ):
@@ -196,9 +172,9 @@ class RootLay(FloatLayout):
                 input = self.stream.readstream(self.recv_stream)
                 self.scale_output = self.scale_output + '\n->: ' + input
             self._check = False
-            self.ids.stable_output.text = 'Disconnected'
         except jnius.jnius.JavaException as e:
             self.blue_info = '[b]Error[/b]'
+            self.scale_output = self.scale_output + '\n->: Error: Connection lost'
             self.cancel_scale()
         except ValueError as e:
             pass
@@ -217,62 +193,54 @@ class RootLay(FloatLayout):
             self.bcheck_thread = threading.Thread(target=self.run_timeout, args=(10,))
             self.bcheck_thread.start()
 
+    # threaded function to check Rfcomm connection
     def run_timeout(self, n):
         self.num = n
         while ( self._check and self.num > 0 ):
-            print(self.num, 'timeout')
             if self.rfsocket.connected and self.recv_stream is not None:
                 self.num -= 1
             else:
-                self.ids.stable_output.text = 'Disconnecting..'
                 self.num -= self.num
             if self.bconnect_thread is not None:
                 if self.bconnect_thread.is_alive():
-                    print(' bluetooth is alive')
+                    pass
                 else:
                     self.num -= self.num
-                    print(' bluetooth is dead')
+                    self.scale_output = self.scale_output + '\n->: Thread died'
             time.sleep(1)
+        self.ids.stable_output.text = 'Disconnecting..'
         self.cancel_scale()
-
-    def weight_ticker(self):
-        self.weigh_tme = 1000
-        self.weigh_tick = Clock.create_trigger(lambda dt: self.GetInput(), 0)
-        self.weigh_tick()
 
     def bluetooth_thread(self):
         is_enabled = False
         is_enabled = BluetoothHelper().check_bluetooth_enabled()
         if is_enabled:
             if platform == 'android':
-                # self.bconnect_thread = threading.Thread(target=self.GetBSerial)
-                # self.bconnect_thread.start()
-                print('connecting')
                 self.GetBSerial()
         else:
             self.dialog_with_action.open_popup_dialog('Enable bluetooth', 'bluetooth', 'info')
 
     #Disconnect gracefully
     def cancel_scale(self):
-        print('stooopping')
         if self.send_stream is not None and self.send_stream:
             self.send_stream.close()
-            print('close out stream rf')
+            self.scale_output = self.scale_output + '\n->: Close connection output stream'
         if self.recv_stream is not None and self.recv_stream:
             self.recv_stream.close()
-            print('close in stream rf')
+            self.scale_output = self.scale_output + '\n->: Close connection input stream'
         if self.rfsocket is not None:
             if self.rfsocket.connected:
                 self.rfsocket.close()
-                print(' close Connecting rf')
+                self.scale_output = self.scale_output + '\n->: Close Rfcomm connection'
         self._alive = False
         self._check = False
         self.num = 0
         self.bconnect_thread = None
         self.bcheck_thread = None
-        print('Threads stopped')
+        self.scale_output = self.scale_output + '\n->: Threads is stopped'
         self.blue_info = ''
         self.scale_output = self.scale_output + '\n->: Disconnected'
+        self.ids.stable_output.text = 'Disconnected'
 
     def get_devices(self):
         dev_list = []

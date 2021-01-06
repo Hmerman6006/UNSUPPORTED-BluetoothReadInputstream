@@ -3,11 +3,6 @@ import json
 bluetooth_settings_json = json.dumps([
 	{'type': 'title',
 	'title': 'Settings for Bluetooth'},
-	{'type': 'string',
-	'title': 'Bluetooth Device Name',
-	'desc': 'Set bluetooth device name',
-	'section': 'bluetoothsettings',
-	'key': 'stringbluedevname'},
 	{'type': 'options',
 	'title': 'Uuid',
 	'desc': 'Choose uuid',
